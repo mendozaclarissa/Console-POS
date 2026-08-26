@@ -41,6 +41,8 @@ namespace console_POS
             25
         };
 
+        static string[] cartItems = new string[100];
+        static decimal[] cartQuantities = new decimal[100];
 
         static void Main(string[] args)
         {
@@ -51,15 +53,14 @@ namespace console_POS
                 switch (option)
                 {
                     case 1:
-                        DisplayItems();
-                        Console.ReadKey();
+                        AddItemToCart();
                         break;
                     case 2:
                         // Remove Item
                         break;
 
                     case 3:
-                        // View Cart
+                        ViewCart();
                         break;
 
                     case 4:
@@ -108,6 +109,70 @@ namespace console_POS
 
             for (int i = 0; i < items.Length; i++)
                 Console.WriteLine($" [{i + 1}] {items[i],-15} P{prices[i]}");
+
+            Console.WriteLine("-------------------------------");
+
+        }
+
+
+        static void AddItemToCart()
+        {
+            DisplayItems();
+            Console.WriteLine("Choose Item:");
+            int choice;
+
+            if (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > items.Length)
+            {
+                Console.WriteLine("Invalid choice. Please try again.");
+                return;
+            }
+
+            Console.WriteLine("Quantity:");
+            int quantity;
+
+            if (!int.TryParse(Console.ReadLine(), out quantity) || quantity <= 0)
+            {
+                Console.WriteLine("Invalid quantity. Please try again.");
+                return;
+            }
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (i == choice - 1)
+                {
+                    cartItems[i] = items[i];
+                    cartQuantities[i] = quantity;
+                    break;
+                }
+            }
+
+            Console.WriteLine($"Added {items[choice - 1]} to the cart.");
+        }
+
+
+        static void ViewCart()
+        {
+            Console.Clear();
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("            CART");
+            Console.WriteLine("-------------------------------");
+
+            decimal total = 0;
+
+            for (int i = 0; i < cartItems.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(cartItems[i]))
+                {
+                    decimal itemTotal = prices[i] * cartQuantities[i];
+                    total += itemTotal;
+                    Console.WriteLine($" {cartItems[i],-15} x{cartQuantities[i],-5} - P{itemTotal}");
+                }
+            }
+
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine($" Total: P{total}");
+            Console.ReadKey();
+
         }
     }
 }
